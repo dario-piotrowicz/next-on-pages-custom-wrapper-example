@@ -1,6 +1,8 @@
-import { execSync } from "child_process";
-import { writeFileSync, renameSync, readFileSync } from "fs";
-import { join } from 'path';
+import { execSync } from "node:child_process";
+import { renameSync } from "node:fs";
+import { join } from 'node:path';
+
+import { build } from 'esbuild';
 
 const outDir = "dist";
 
@@ -13,10 +15,14 @@ const nextOnPagesHandler = join(workerJsOutDir, nextOnPagesHandlerFileName);
 
 renameSync(indexFile, nextOnPagesHandler);
 
-const customWorkerContent = readFileSync('worker.js', { encoding: 'utf-8'});
-
-writeFileSync(indexFile,
-`const nextOnPagesFetch = await import('./${nextOnPagesHandlerFileName}').then(m => m.default.fetch);
-
-${customWorkerContent}
-`);
+await build({
+    entryPoints: ['worker.ts'],
+    banner: {
+        js: `const nextOnPagesFetch = await import('./${nextOnPagesHandlerFileName}').then(m => m.default.fetch);`,
+    },
+    bundle: true,
+    format: 'esm',
+    platform: 'browser',
+    outfile: indexFile,
+    minify: true,
+});
