@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "npm run pages:build && wrangler pages dev .vercel/output/static --port 0",
-    "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
+    "pages:build": "node ./scripts/build.mjs",
+    "preview": "npm run pages:build && wrangler pages dev dist --port 0",
+    "deploy": "npm run pages:build && wrangler pages deploy dist",
     "build-cf-types": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
   "dependencies": {
@@ -18,7 +18,7 @@
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "1",
+    "@cloudflare/next-on-pages": "^1",
     "@cloudflare/workers-types": "^4.20240320.1",
     "@types/node": "^20",
     "@types/react": "^18",
